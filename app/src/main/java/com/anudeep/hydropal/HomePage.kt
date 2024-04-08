@@ -3,6 +3,7 @@ package com.anudeep.hydropal
 
 
 //import androidx.compose.material3.Text
+import android.content.res.Configuration
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateFloatAsState
@@ -43,6 +44,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -70,31 +72,55 @@ fun WaterReminderApp() {
             durationMillis = 1000
         ), label = ""
     )
+    val configuration: Configuration = LocalConfiguration.current
+    //check for device rotation
+    if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        Row (
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(10.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            CircularProgressbar(
+                name = "Water Intake",
+                size = 200.dp,
+                foregroundIndicatorColor = MaterialTheme.colorScheme.primary,
+                shadowColor = Color.LightGray,
+                indicatorThickness = 20.dp,
+                dataUsage = (totalWaterIntake.toFloat() / dailyGoal.toFloat()) * 100,
+                animationDuration = 1000,
+                dataTextStyle = TextStyle(fontSize = 20.sp)
+            )
+            Column (verticalArrangement = Arrangement.SpaceEvenly, horizontalAlignment = Alignment.CenterHorizontally){
+                DisplayText(name = "", animateNumber = dataUsageAnimate, dataTextStyle = TextStyle(fontSize = 32.sp), usePercentage = false, targetValue = dailyGoal.toFloat())
+                AddWaterIntakeButton(remwaterIntakeList, totalWaterIntake)
+
+            }
+        }
+    }
+    else
     Column (modifier = Modifier
         .fillMaxSize()
         .padding(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.SpaceEvenly
     ) {
 
-    Greeting()
-    Spacer(modifier = Modifier.height(40.dp))
-//    WaterIntakeProgress(totalWaterIntake, dailyGoal)
-    CircularProgressbar(
-        name = "Water Intake",
-        size = 200.dp,
-        foregroundIndicatorColor = MaterialTheme.colorScheme.primary,
-        shadowColor = Color.LightGray,
-        indicatorThickness = 20.dp,
-        dataUsage = (totalWaterIntake.toFloat() / dailyGoal.toFloat()) * 100,
-        animationDuration = 1000,
-        dataTextStyle = TextStyle(fontSize = 20.sp)
-    )
-
-    DisplayText(name = "", animateNumber = dataUsageAnimate , dataTextStyle = TextStyle(fontSize = 32.sp),usePercentage = false,targetValue = dailyGoal.toFloat())
-    Spacer(modifier = Modifier.height(40.dp))
-    AddWaterIntakeButton(remwaterIntakeList,totalWaterIntake)
-    Spacer(modifier = Modifier.height(40.dp))
+        Greeting()
+        CircularProgressbar(
+            name = "Water Intake",
+            size = 200.dp,
+            foregroundIndicatorColor = MaterialTheme.colorScheme.primary,
+            shadowColor = Color.LightGray,
+            indicatorThickness = 20.dp,
+            dataUsage = (totalWaterIntake.toFloat() / dailyGoal.toFloat()) * 100,
+            animationDuration = 1000,
+            dataTextStyle = TextStyle(fontSize = 20.sp)
+        )
+        DisplayText(name = "", animateNumber = dataUsageAnimate , dataTextStyle = TextStyle(fontSize = 32.sp),usePercentage = false,targetValue = dailyGoal.toFloat())
+        AddWaterIntakeButton(remwaterIntakeList,totalWaterIntake)
+    
 //    WaterIntakeList(waterIntakeList)
     }
 
@@ -173,7 +199,9 @@ fun WaterIntakeListItem(waterIntake: WaterIntake) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row (modifier = Modifier.padding(30.dp).fillMaxWidth(),
+        Row (modifier = Modifier
+            .padding(30.dp)
+            .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             ){
             Text(text = "${waterIntake.amount}ml",color=MaterialTheme.colorScheme.onSurface,fontSize = 20.sp)
@@ -282,7 +310,7 @@ fun CircularProgressbar(
     }
 
     // Spacer to add some padding below the circular progress bar
-    Spacer(modifier = Modifier.height(40.dp))
+    
 }
 
 @Composable
