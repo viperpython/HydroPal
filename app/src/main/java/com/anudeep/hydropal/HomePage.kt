@@ -16,11 +16,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
@@ -82,6 +83,7 @@ fun WaterReminderApp() {
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ){
+            Spacer(modifier = Modifier.width(40.dp))
             CircularProgressbar(
                 name = "Water Intake",
                 size = 200.dp,
@@ -92,7 +94,8 @@ fun WaterReminderApp() {
                 animationDuration = 1000,
                 dataTextStyle = TextStyle(fontSize = 20.sp)
             )
-            Column (verticalArrangement = Arrangement.SpaceEvenly, horizontalAlignment = Alignment.CenterHorizontally){
+            Column (verticalArrangement = Arrangement.SpaceEvenly, horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxHeight()){
+                Greeting()
                 DisplayText(name = "", animateNumber = dataUsageAnimate, dataTextStyle = TextStyle(fontSize = 32.sp), usePercentage = false, targetValue = dailyGoal.toFloat())
                 AddWaterIntakeButton(remwaterIntakeList, totalWaterIntake)
 
@@ -228,7 +231,7 @@ fun CircularProgressbar(
 ) {
     // State to hold the data usage value for animation
     var dataUsageRemember by remember {
-        mutableFloatStateOf(-1f)
+        mutableFloatStateOf(0f)
     }
 
     // State for animating the data usage value
