@@ -38,6 +38,7 @@ import com.anudeep.hydropal.ui.theme.HydroPalTheme
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
+        IntakeList.initializeDatabase(application)
         super.onCreate(savedInstanceState)
         setContent {
             HydroPalTheme {

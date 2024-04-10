@@ -1,12 +1,12 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("kotlin-kapt")
 }
 
 android {
     namespace = "com.anudeep.hydropal"
     compileSdk = 34
-
     defaultConfig {
         applicationId = "com.anudeep.hydropal"
         minSdk = 24
@@ -50,6 +50,7 @@ android {
 }
 
 dependencies {
+    val room_version = "2.6.1"
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -68,4 +69,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("androidx.compose.material:material:1.5.4")
+    implementation ("androidx.room:room-runtime:2.4.1")
+    kapt("androidx.room:room-compiler:$room_version")
 }

@@ -5,6 +5,7 @@ package com.anudeep.hydropal
 //import androidx.compose.material3.Text
 import android.content.res.Configuration
 import android.os.Build
+
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -35,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -52,6 +54,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -140,46 +143,46 @@ fun Greeting() {
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun AddWaterIntakeButton(waterIntakeList: MutableList<WaterIntake>,totalWaterIntake: Int) {
-    Row (
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ){
-        Button(
-            onClick = {
-                if (waterIntakeList.isNotEmpty()){
-                waterIntakeList.remove(waterIntakeList.last())
-                IntakeList.waterIntakeList.remove(IntakeList.waterIntakeList.last())
-                }
-                if (totalWaterIntake > 0)
-                    totalWaterIntake.minus(250)
-            },
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-//            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = "Remove last intake",
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-        }
-    Button(
-        onClick = {
-            waterIntakeList.add(WaterIntake(amount = 250, timestamp = LocalDateTime.now()))
-            IntakeList.waterIntakeList.add(WaterIntake(amount = 250, timestamp = LocalDateTime.now()))
-            totalWaterIntake.plus(250)
-        },
-        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-//        modifier = Modifier.fillMaxWidth()
-    ) {
-        Text(
-            text = "Add 250ml",
-            color = MaterialTheme.colorScheme.onPrimary
-        )
-    }
-    }
-}
+//@RequiresApi(Build.VERSION_CODES.O)
+//@Composable
+//fun AddWaterIntakeButton(waterIntakeList: MutableList<WaterIntake>,totalWaterIntake: Int) {
+//    Row (
+//        modifier = Modifier.fillMaxWidth(),
+//        horizontalArrangement = Arrangement.SpaceEvenly
+//    ){
+//        Button(
+//            onClick = {
+//                if (waterIntakeList.isNotEmpty()){
+//                waterIntakeList.remove(waterIntakeList.last())
+//                IntakeList.deleteWaterIntake()
+//                }
+//                if (totalWaterIntake > 0)
+//                    totalWaterIntake.minus(250)
+//            },
+//            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+////            modifier = Modifier.fillMaxWidth()
+//        ) {
+//            Text(
+//                text = "Remove last intake",
+//                color = MaterialTheme.colorScheme.onPrimary
+//            )
+//        }
+//    Button(
+//        onClick = {
+//            waterIntakeList.add(WaterIntake(amount = 250, timestamp = LocalDateTime.now().toEpochSecond(java.time.ZoneOffset.UTC)))
+//            IntakeList.addWaterIntake(250)
+//            totalWaterIntake.plus(250)
+//        },
+//        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+////        modifier = Modifier.fillMaxWidth()
+//    ) {
+//        Text(
+//            text = "Add 250ml",
+//            color = MaterialTheme.colorScheme.onPrimary
+//        )
+//    }
+//    }
+//}
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -209,7 +212,8 @@ fun WaterIntakeListItem(waterIntake: WaterIntake) {
             ){
             Text(text = "${waterIntake.amount}ml",color=MaterialTheme.colorScheme.onSurface,fontSize = 20.sp)
             Text(
-                text = waterIntake.timestamp.format(DateTimeFormatter.ofPattern("HH:mm")),
+                //time stamp is long convert to time
+                text = LocalDateTime.ofEpochSecond(waterIntake.timestamp, 0, java.time.ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("HH:mm")),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 12.sp
             )
@@ -243,12 +247,21 @@ fun CircularProgressbar(
     )
 
     // Trigger the LaunchedEffect to start the animation when the composable is first launched.
+//    val coroutineScope = rememberCoroutineScope()
+
+
     LaunchedEffect(Unit) {
-//        dataUsageRemember = dataUsage
+        //Todo
+        Thread {
+            run{
+
+            IntakeList.waterIntakeList=IntakeList.loadWaterIntakeList()
         IntakeList.waterIntakeList.forEach {
             remwaterIntakeList.add(it)
         }
+            }
 
+        }.start()
     }
     //Trigger when dataUsage value changes
     LaunchedEffect(dataUsage) {
@@ -356,4 +369,3 @@ private fun DisplayText(
         }
     }
 }
-data class WaterIntake(val amount: Int, val timestamp: LocalDateTime)
