@@ -105,31 +105,38 @@ fun WaterReminderApp() {
             }
         }
     }
-    else
-    Column (modifier = Modifier
-        .fillMaxSize()
-        .padding(10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly
-    ) {
+    else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
 
-        Greeting()
-        CircularProgressbar(
-            name = "Water Intake",
-            size = 200.dp,
-            foregroundIndicatorColor = MaterialTheme.colorScheme.primary,
-            shadowColor = Color.LightGray,
-            indicatorThickness = 20.dp,
-            dataUsage = (totalWaterIntake.toFloat() / dailyGoal.toFloat()) * 100,
-            animationDuration = 1000,
-            dataTextStyle = TextStyle(fontSize = 20.sp)
-        )
-        DisplayText(name = "", animateNumber = dataUsageAnimate , dataTextStyle = TextStyle(fontSize = 32.sp),usePercentage = false,targetValue = dailyGoal.toFloat())
-        AddWaterIntakeButton(remwaterIntakeList,totalWaterIntake)
-    
+            Greeting()
+            CircularProgressbar(
+                name = "Water Intake",
+                size = 200.dp,
+                foregroundIndicatorColor = MaterialTheme.colorScheme.primary,
+                shadowColor = Color.LightGray,
+                indicatorThickness = 20.dp,
+                dataUsage = (totalWaterIntake.toFloat() / dailyGoal.toFloat()) * 100,
+                animationDuration = 1000,
+                dataTextStyle = TextStyle(fontSize = 20.sp)
+            )
+            DisplayText(
+                name = "",
+                animateNumber = dataUsageAnimate,
+                dataTextStyle = TextStyle(fontSize = 32.sp),
+                usePercentage = false,
+                targetValue = dailyGoal.toFloat()
+            )
+            AddWaterIntakeButton(remwaterIntakeList, totalWaterIntake)
+
 //    WaterIntakeList(waterIntakeList)
+        }
     }
-
 }
 
 @Composable
