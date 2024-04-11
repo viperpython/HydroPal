@@ -19,11 +19,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import com.anudeep.hydropal.IntakeList.saveWaterIntake
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AddWaterIntakeButton(waterIntakeList: MutableList<WaterIntake>,totalWaterIntake: Int) {
-    val coroutineScope = rememberCoroutineScope()
     Row (
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly
@@ -51,14 +51,14 @@ fun AddWaterIntakeButton(waterIntakeList: MutableList<WaterIntake>,totalWaterInt
         }
         Button(
             onClick = {
-                waterIntakeList.add(WaterIntake(amount = 250, timestamp = System.currentTimeMillis()))
+                waterIntakeList.add(WaterIntake(amount = 250, timestamp = LocalDateTime.now().toEpochSecond(java.time.ZoneOffset.UTC)))
                 //TODO
                 Thread {
                     run {
                     saveWaterIntake(
                         WaterIntake(
                             amount = 250,
-                            timestamp = System.currentTimeMillis()
+                            timestamp = LocalDateTime.now().toEpochSecond(java.time.ZoneOffset.UTC)
                         )
                     )
                     }

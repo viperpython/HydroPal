@@ -35,7 +35,7 @@ class NotificationManager(private val context: Context) {
 
     fun showNotification(title: String="Reminder to Drink Water", content: String) {
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.img)
+            .setSmallIcon(R.drawable.ic_launcher_monochrome)
             .setContentTitle(title)
             .setContentText(content)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

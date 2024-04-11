@@ -220,7 +220,7 @@ fun WaterIntakeListItem(waterIntake: WaterIntake) {
             Text(text = "${waterIntake.amount}ml",color=MaterialTheme.colorScheme.onSurface,fontSize = 20.sp)
             Text(
                 //time stamp is long convert to time
-                text = LocalDateTime.ofEpochSecond(waterIntake.timestamp, 0, java.time.ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("HH:mm")),
+                text = LocalDateTime.ofEpochSecond(waterIntake.timestamp, 0, java.time.ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("hh:mm:ss a")),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 12.sp
             )
@@ -350,17 +350,17 @@ private fun DisplayText(
         modifier = Modifier.padding(8.dp)
     ) {
         // Display the name with bold font and ellipsis for overflow
-        if (name!="")
-        Text(
-            text = name,
-            fontWeight = FontWeight.Bold,
-            style = dataTextStyle,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            color = MaterialTheme.colorScheme.primary
-        )
-
+        if (name!="") {
+            Text(
+                text = name,
+                fontWeight = FontWeight.Bold,
+                style = dataTextStyle,
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
         // Display the data usage percentage text
         if (usePercentage) {
             Text(
