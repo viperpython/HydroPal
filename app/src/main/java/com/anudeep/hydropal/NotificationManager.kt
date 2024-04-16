@@ -2,7 +2,9 @@ package com.anudeep.hydropal
 import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.ActivityCompat
@@ -34,11 +36,15 @@ class NotificationManager(private val context: Context) {
     }
 
     fun showNotification(title: String="Reminder to Drink Water", content: String) {
+
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_monochrome)
             .setContentTitle(title)
             .setContentText(content)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(PendingIntent.getActivity(context, 0, Intent(context, MainActivity::class.java),
+                PendingIntent.FLAG_IMMUTABLE))
+            .setAutoCancel(true)
 
         with(NotificationManagerCompat.from(context)) {
             if (ActivityCompat.checkSelfPermission(
@@ -48,6 +54,7 @@ class NotificationManager(private val context: Context) {
             ) {
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
+
                 return
             }
             notify(1, builder.build())

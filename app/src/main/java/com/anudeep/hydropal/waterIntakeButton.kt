@@ -1,5 +1,6 @@
 package com.anudeep.hydropal
 
+import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
@@ -11,19 +12,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import androidx.compose.runtime.rememberCoroutineScope
 import com.anudeep.hydropal.IntakeList.saveWaterIntake
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AddWaterIntakeButton(waterIntakeList: MutableList<WaterIntake>,totalWaterIntake: Int) {
+fun AddWaterIntakeButton(waterIntakeList: MutableList<WaterIntake>,totalWaterIntake: Int, context: Context){
+    val sp = context.getSharedPreferences("HydroPal", Context.MODE_PRIVATE)
+    val glassSize = sp.getInt("glassSize", 250)
     Row (
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly
@@ -40,7 +36,7 @@ fun AddWaterIntakeButton(waterIntakeList: MutableList<WaterIntake>,totalWaterInt
                     }.start()
                 }
                 if (totalWaterIntake > 0)
-                    totalWaterIntake.minus(250)
+                    totalWaterIntake.minus(glassSize)
             },
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
         ) {
@@ -51,24 +47,24 @@ fun AddWaterIntakeButton(waterIntakeList: MutableList<WaterIntake>,totalWaterInt
         }
         Button(
             onClick = {
-                waterIntakeList.add(WaterIntake(amount = 250, timestamp = LocalDateTime.now().toEpochSecond(java.time.ZoneOffset.UTC)))
+                waterIntakeList.add(WaterIntake(amount = glassSize, timestamp = LocalDateTime.now().toEpochSecond(java.time.ZoneOffset.UTC)))
                 //TODO
                 Thread {
                     run {
                     saveWaterIntake(
                         WaterIntake(
-                            amount = 250,
+                            amount = glassSize,
                             timestamp = LocalDateTime.now().toEpochSecond(java.time.ZoneOffset.UTC)
                         )
                     )
                     }
-                totalWaterIntake.plus(250)
+                totalWaterIntake.plus(glassSize)
                 }.start()
             },
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
         ) {
             Text(
-                text = "Add 250ml",
+                text = "Add ${glassSize}ml",
                 color = MaterialTheme.colorScheme.onPrimary
             )
         }

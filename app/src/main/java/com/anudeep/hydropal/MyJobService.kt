@@ -9,7 +9,6 @@ class MyJobService : JobService() {
         // If your job is offloaded to a separate thread, return true. Otherwise, return false.
         val notificationManager = NotificationManager(applicationContext)
         notificationManager.showNotification("HydroPal Reminder", notiStrings.waterReminderMessages.random())
-
         return false
     }
 

@@ -12,5 +12,5 @@ interface WaterIntakeDao {
     @Insert
     fun insertAll(vararg waterIntakes: WaterIntake)
     @Query("DELETE FROM WaterIntake WHERE Timestamp = (select max(Timestamp) from WaterIntake)")
-    abstract fun delete()
+    fun delete()
 }

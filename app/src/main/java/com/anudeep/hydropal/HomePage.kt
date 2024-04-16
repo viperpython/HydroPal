@@ -3,9 +3,10 @@ package com.anudeep.hydropal
 
 
 //import androidx.compose.material3.Text
+
+import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
-
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -26,8 +27,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,7 +35,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -54,22 +52,22 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 lateinit var remwaterIntakeList: SnapshotStateList<WaterIntake>
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Home(){
-    WaterReminderApp()
+fun Home(context: Context){
+    WaterReminderApp(context)
 }
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun WaterReminderApp() {
+fun WaterReminderApp(context: Context) {
+    val sp = context.getSharedPreferences("HydroPal", Context.MODE_PRIVATE)
     remwaterIntakeList = remember { mutableStateListOf() }
     val totalWaterIntake = remwaterIntakeList.sumOf { it.amount }
-    val dailyGoal = 2000 // Daily water intake goal in milliliters
+    val dailyGoal = sp.getInt("dailyGoal",2000) // Daily water intake goal in milliliters
     val dataUsageAnimate = animateFloatAsState(
         targetValue = totalWaterIntake.toFloat(),
         animationSpec = tween(
@@ -98,9 +96,9 @@ fun WaterReminderApp() {
                 dataTextStyle = TextStyle(fontSize = 20.sp)
             )
             Column (verticalArrangement = Arrangement.SpaceEvenly, horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxHeight()){
-                Greeting()
+                Greeting(context)
                 DisplayText(name = "", animateNumber = dataUsageAnimate, dataTextStyle = TextStyle(fontSize = 32.sp), usePercentage = false, targetValue = dailyGoal.toFloat())
-                AddWaterIntakeButton(remwaterIntakeList, totalWaterIntake)
+                AddWaterIntakeButton(remwaterIntakeList, totalWaterIntake, context)
 
             }
         }
@@ -114,7 +112,7 @@ fun WaterReminderApp() {
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
 
-            Greeting()
+            Greeting(context)
             CircularProgressbar(
                 name = "Water Intake",
                 size = 200.dp,
@@ -132,7 +130,7 @@ fun WaterReminderApp() {
                 usePercentage = false,
                 targetValue = dailyGoal.toFloat()
             )
-            AddWaterIntakeButton(remwaterIntakeList, totalWaterIntake)
+            AddWaterIntakeButton(remwaterIntakeList, totalWaterIntake,context)
 
 //    WaterIntakeList(waterIntakeList)
         }
@@ -140,9 +138,11 @@ fun WaterReminderApp() {
 }
 
 @Composable
-fun Greeting() {
+fun Greeting(context: Context) {
+    val sp = context.getSharedPreferences("HydroPal", Context.MODE_PRIVATE)
+    val name = sp.getString("name","Human")
     Text(
-        text="Hi Anudeep!",
+        text="Hi $name!",
         fontSize = 40.sp,
         fontWeight = FontWeight.Bold,
         color = MaterialTheme.colorScheme.onSurface
@@ -258,7 +258,6 @@ fun CircularProgressbar(
 
 
     LaunchedEffect(Unit) {
-        //Todo
         Thread {
             run{
 

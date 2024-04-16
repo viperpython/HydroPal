@@ -1,8 +1,14 @@
 package com.anudeep.hydropal
 
 import android.Manifest
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
+import android.content.ComponentName
+import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -25,28 +31,22 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.anudeep.hydropal.ui.theme.HydroPalTheme
-import android.app.job.JobInfo
-import android.app.job.JobScheduler
-import android.content.ComponentName
-import android.content.Context
-import android.content.pm.PackageManager
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
+        val context= this
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.POST_NOTIFICATIONS
@@ -60,10 +60,17 @@ class MainActivity : ComponentActivity() {
         }
             IntakeList.initializeDatabase(application)
             val jobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-            val jobInfo = JobInfo.Builder(1, ComponentName(this, MyJobService::class.java))
-                .setPeriodic(60 * 60 * 1000) // Every hour
-                .build()
-            jobScheduler.schedule(jobInfo)
+            if(jobScheduler.allPendingJobs.isEmpty()){
+                val jobInfo = JobInfo.Builder(1, ComponentName(this, MyJobService::class.java))
+                    .setPeriodic(60 * 60 * 1000) // Every hour
+                    .build()
+                jobScheduler.schedule(jobInfo)
+                Log.d("newJob","new job scheduled")
+            }
+
+        for (allPendingJob in jobScheduler.allPendingJobs) {
+            Log.d("getcurrjobs","${allPendingJob.id} ${allPendingJob.service.className} ${allPendingJob.isPeriodic} this")
+        }
             NotificationManager(this)
             setContent {
                 HydroPalTheme {
@@ -84,26 +91,14 @@ class MainActivity : ComponentActivity() {
                             unselectedIcon = Icons.Outlined.Settings
                         )
                     )
-                    // A surface container using the 'background' color from the theme
                     var selectedItemindex by rememberSaveable {
-                        mutableStateOf(0)
+                        mutableIntStateOf(0)
                     }
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background
                     ) {
                         val navController = rememberNavController()
-//                    NavHost(navController=navController,startDestination = "Home"){
-//                        composable("Home"){
-//                            Home()
-//                        }
-//                        composable("History"){
-//                            History()
-//                        }
-//                        composable("Settings"){
-//                            SettingsPage()
-//                        }
-//                }
                         Scaffold(
                             modifier = Modifier.fillMaxSize(),
                             bottomBar = {
@@ -137,13 +132,13 @@ class MainActivity : ComponentActivity() {
                                         startDestination = "Home"
                                     ) {
                                         composable("Home") {
-                                            Home()
+                                            Home(context)
                                         }
                                         composable("History") {
                                             History()
                                         }
                                         composable("Settings") {
-                                            SettingsPage()
+                                            SettingsPage(context)
                                         }
                                     }
                                 }
