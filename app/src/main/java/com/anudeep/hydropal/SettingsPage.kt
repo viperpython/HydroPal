@@ -91,7 +91,6 @@ fun SettingsPage(context: Context) {
         )
     }
 }
-
 @Composable
 fun SettingItem(
     label: String,
